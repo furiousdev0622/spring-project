@@ -9,8 +9,6 @@ import org.springframework.stereotype.Service;
 import sirkostya009.posterapp.model.AppUser;
 import sirkostya009.posterapp.repo.UserRepo;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
@@ -19,12 +17,8 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return repo.findByUsernameOrEmail(username, username) // searches for both username and login, TODO probably needs refactoring
-                .orElseThrow(() -> new UsernameNotFoundException("login " + username + " not found"));
-    }
-
-    public List<AppUser> findAll() {
-        return repo.findAll();
+        return repo.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("username " + username + " not found"));
     }
 
     public AppUser findById(Long id) {
@@ -44,9 +38,9 @@ public class UserService implements UserDetailsService {
         repo.save(user);
     }
 
-    public AppUser findByUsername(String username) {
-        return repo.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("username " + username + " not found"));
+    public AppUser findByLogin(String login) {
+        return repo.findByUsernameOrEmail(login, login)
+                .orElseThrow(() -> new RuntimeException("login " + login + " not found"));
     }
 
     public AppUser findByEmail(String email) {
