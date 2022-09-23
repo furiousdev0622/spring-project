@@ -19,10 +19,10 @@ public class Poster {
     @Column(nullable = false)
     private String text;
     @Column(nullable = false)
-    private Long authorId;
+    private String author;
 
-    public Poster(String text, Long authorId) {
+    public Poster(String text, String author) {
         this.text = text;
-        this.authorId = authorId;
+        this.author = author;
     }
 }
