@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -20,6 +21,10 @@ public class Poster {
     private String text;
     @Column(nullable = false)
     private String author;
+
+    @ManyToMany
+    @ToString.Exclude
+    private final Set<AppUser> likes = Set.of();
 
     public Poster(String text, String author) {
         this.text = text;
