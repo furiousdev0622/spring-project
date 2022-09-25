@@ -29,9 +29,9 @@ public class RegistrationApi {
      * @return just a response entity with "confirmed" string in body
      */
     @GetMapping("/confirm")
-    public ResponseEntity<?> confirm(@RequestParam String token) {
+    public String confirm(@RequestParam String token) {
         service.confirm(token);
-        return ResponseEntity.ok("confirmed");
+        return "confirmed";
     }
 
 }
