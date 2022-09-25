@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -34,22 +35,6 @@ public class AppUser implements UserDetails {
         this.email = email;
         this.username = username;
         this.password = password;
-    }
-
-    public AppUser(String email,
-                   String username,
-                   String password,
-                   boolean isExpired,
-                   boolean isLocked,
-                   boolean isCredentialsExpired,
-                   boolean isEnabled) {
-        this.email = email;
-        this.username = username;
-        this.password = password;
-        this.isExpired = isExpired;
-        this.isLocked = isLocked;
-        this.isCredentialsExpired = isCredentialsExpired;
-        this.isEnabled = isEnabled;
     }
 
     @Override
@@ -93,5 +78,17 @@ public class AppUser implements UserDetails {
 
     public void disable() {
         isEnabled = false;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AppUser appUser)) return false;
+        return isExpired == appUser.isExpired && isLocked == appUser.isLocked && isCredentialsExpired == appUser.isCredentialsExpired && isEnabled == appUser.isEnabled && id.equals(appUser.id) && email.equals(appUser.email) && username.equals(appUser.username) && password.equals(appUser.password);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, email, username, password, isExpired, isLocked, isCredentialsExpired, isEnabled);
     }
 }
