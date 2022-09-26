@@ -52,8 +52,10 @@ public class PosterService {
         return poster.getLikes().contains(user);
     }
 
-    public List<PosterModel> findAllByUsername(String username) {
-        return postersToModels(repo.findAllByAuthor(username), false);
+    public Page<PosterModel> findAllByUsername(String username, int pageNumber) {
+        var page = repo.findAllByAuthor(username, PageRequest.of(pageNumber, postsPerSlice));
+        var result = postersToModels(page.getContent(), false);
+        return new PageImpl<>(result, page.getPageable(), page.getTotalElements());
     }
 
     private PosterModel posterToModel(Poster poster, boolean includeUserInfo) {

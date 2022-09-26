@@ -50,12 +50,12 @@ public class UserApi {
 
     @GetMapping("/self")
     public UserInfo getUserInfo(UsernamePasswordAuthenticationToken token) {
-        return UserInfo.fromAppUser(userFromToken(token));
+        return UserInfo.fromAppUser(userFromToken(token), true);
     }
 
     @GetMapping(value = "/photo/{fileName}", produces = MediaType.IMAGE_JPEG_VALUE)
     public byte[] getPhoto(@PathVariable String fileName) throws IOException {
-        return Files.readAllBytes(Paths.get("D:/server/images/" + fileName));
+        return Files.readAllBytes(Paths.get(service.ImagesPath + fileName));
     }
 
     @PostMapping("/photo/upload")

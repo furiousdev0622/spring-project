@@ -33,6 +33,8 @@ public class AppUser implements UserDetails {
     @ToString.Exclude
     private List<Poster> posters;
 
+    private String bio;
+
     private boolean isExpired = false;
     private boolean isLocked = false;
     private boolean isCredentialsExpired = false;

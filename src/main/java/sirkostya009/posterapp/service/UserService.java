@@ -22,6 +22,8 @@ public class UserService implements UserDetailsService {
     private final UserRepo repo;
     private final PasswordEncoder encoder;
 
+    public final String ImagesPath = "D:/server/images/";
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return repo.findByUsername(username)
@@ -60,7 +62,7 @@ public class UserService implements UserDetailsService {
         // TODO implement compression and cropping (if not 1:1) procedures
         var originalName = file.getOriginalFilename();
         var fileName = UUID.randomUUID() + originalName.substring(originalName.lastIndexOf('.'));
-        Files.write(Path.of("D:/server/images/" + fileName), file.getBytes());
+        Files.write(Path.of(ImagesPath + fileName), file.getBytes());
         ((AppUser)loadUserByUsername(username)).setProfilePictureFilename(fileName);
     }
 }

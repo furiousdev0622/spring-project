@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import sirkostya009.posterapp.model.PosterModel;
 import sirkostya009.posterapp.service.PosterService;
 
-import java.util.List;
-
 import static sirkostya009.posterapp.util.UserUtils.userFromToken;
 
 @RestController
@@ -40,8 +38,8 @@ public class PosterApi {
     }
 
     @GetMapping("/by/{username}")
-    public List<PosterModel> userPosters(@PathVariable String username) {
-        return service.findAllByUsername(username);
+    public Page<PosterModel> userPosters(@PathVariable String username, @RequestParam(value = "value", defaultValue = "0") int page) {
+        return service.findAllByUsername(username, page);
     }
 
 }
