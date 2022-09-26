@@ -1,19 +1,26 @@
 package sirkostya009.posterapp.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import sirkostya009.posterapp.model.AppUser;
+import sirkostya009.posterapp.model.Credentials;
 import sirkostya009.posterapp.repo.UserRepo;
+import sirkostya009.posterapp.util.JwtUtils;
 
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
     private final UserRepo repo;
     private final PasswordEncoder encoder;
+    private final JwtUtils jwtUtils;
+    private final AuthenticationManager manager;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -46,5 +53,19 @@ public class UserService implements UserDetailsService {
     public AppUser findByEmail(String email) {
         return repo.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("email " + email + " not found"));
+    }
+
+    public String authenticate(Credentials credentials) {
+        try {
+            manager.authenticate(
+                    new UsernamePasswordAuthenticationToken(credentials.getLogin(), credentials.getPassword())
+            );
+        } catch (BadCredentialsException e) {
+            throw new RuntimeException("Login or password incorrect", e);
+        }
+
+        var user = findByLogin(credentials.getLogin());
+
+        return jwtUtils.generateToken(user);
     }
 }

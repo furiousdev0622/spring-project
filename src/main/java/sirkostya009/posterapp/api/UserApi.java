@@ -17,22 +17,10 @@ import sirkostya009.posterapp.util.JwtUtils;
 public class UserApi {
 
     private final UserService service;
-    private final JwtUtils jwtUtils;
-    private final AuthenticationManager manager;
 
     @PostMapping("/authenticate")
     public String authenticate(@RequestBody Credentials credentials) {
-        try {
-            manager.authenticate(
-                    new UsernamePasswordAuthenticationToken(credentials.getLogin(), credentials.getPassword())
-            );
-        } catch (BadCredentialsException e) {
-            throw new RuntimeException("Login or password incorrect", e);
-        }
-
-        var user = service.findByLogin(credentials.getLogin());
-
-        return jwtUtils.generateToken(user);
+        return service.authenticate(credentials);
     }
 
     @GetMapping("/{username}")
