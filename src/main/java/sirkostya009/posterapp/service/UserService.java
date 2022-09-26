@@ -1,26 +1,26 @@
 package sirkostya009.posterapp.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import sirkostya009.posterapp.model.AppUser;
-import sirkostya009.posterapp.model.Credentials;
 import sirkostya009.posterapp.repo.UserRepo;
-import sirkostya009.posterapp.util.JwtUtils;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
     private final UserRepo repo;
     private final PasswordEncoder encoder;
-    private final JwtUtils jwtUtils;
-    private final AuthenticationManager manager;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -55,17 +55,12 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new RuntimeException("email " + email + " not found"));
     }
 
-    public String authenticate(Credentials credentials) {
-        try {
-            manager.authenticate(
-                    new UsernamePasswordAuthenticationToken(credentials.getLogin(), credentials.getPassword())
-            );
-        } catch (BadCredentialsException e) {
-            throw new RuntimeException("Login or password incorrect", e);
-        }
-
-        var user = findByLogin(credentials.getLogin());
-
-        return jwtUtils.generateToken(user);
+    @Transactional
+    public void saveImage(MultipartFile file, String username) throws IOException {
+        // TODO implement compression and cropping (if not 1:1) procedures
+        var originalName = file.getOriginalFilename();
+        var fileName = UUID.randomUUID() + originalName.substring(originalName.lastIndexOf('.'));
+        Files.write(Path.of("D:/server/images/" + fileName), file.getBytes());
+        ((AppUser)loadUserByUsername(username)).setProfilePictureFilename(fileName);
     }
 }

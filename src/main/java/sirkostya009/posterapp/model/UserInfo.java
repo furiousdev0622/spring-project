@@ -9,11 +9,13 @@ import lombok.NoArgsConstructor;
 public @Data class UserInfo {
     private long id;
     private String username;
+    private String photoPath;
 
     public static UserInfo fromAppUser(AppUser user) {
         return new UserInfo(
                 user.getId(),
-                user.getUsername()
+                user.getUsername(),
+                user.getProfilePictureFilename()
         );
     }
 }

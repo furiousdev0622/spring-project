@@ -12,6 +12,8 @@ import sirkostya009.posterapp.model.PosterModel;
 import sirkostya009.posterapp.model.UserInfo;
 import sirkostya009.posterapp.repo.PosterRepo;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class PosterService {
@@ -34,7 +36,7 @@ public class PosterService {
 
     public Page<PosterModel> findAll(int page) {
         var result = repo.findAll(PageRequest.of(page, postsPerSlice));
-        var contents = result.getContent().stream().map(this::posterToModel).toList();
+        var contents = postersToModels(result.getContent());
         return new PageImpl<>(contents, result.getPageable(), result.getTotalElements());
     }
 
@@ -50,14 +52,30 @@ public class PosterService {
         return poster.getLikes().contains(user);
     }
 
-    private PosterModel posterToModel(Poster poster) {
+    public List<PosterModel> findAllByUsername(String username) {
+        return postersToModels(repo.findAllByAuthor(username), false);
+    }
+
+    private PosterModel posterToModel(Poster poster, boolean includeUserInfo) {
         var user = (AppUser) userService.loadUserByUsername(poster.getAuthor());
         return new PosterModel(
                 poster.getText(),
-                UserInfo.fromAppUser(user),
+                includeUserInfo ? UserInfo.fromAppUser(user) : null,
                 poster.getLikes().contains(user),
                 poster.getLikes().size(),
                 poster.getId()
         );
+    }
+
+    private PosterModel posterToModel(Poster poster) {
+        return posterToModel(poster, true);
+    }
+
+    private List<PosterModel> postersToModels(List<Poster> posters, boolean includeUserInfo) {
+        return posters.stream().map(poster -> posterToModel(poster, includeUserInfo)).toList();
+    }
+
+    private List<PosterModel> postersToModels(List<Poster> posters) {
+        return postersToModels(posters, true);
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -25,6 +26,12 @@ public class AppUser implements UserDetails {
     private String username;
     @Column(nullable = false)
     private String password;
+
+    private String profilePictureFilename = null;
+
+    @OneToMany
+    @ToString.Exclude
+    private List<Poster> posters;
 
     private boolean isExpired = false;
     private boolean isLocked = false;

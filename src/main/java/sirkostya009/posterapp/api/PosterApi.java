@@ -4,9 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
-import sirkostya009.posterapp.model.AppUser;
 import sirkostya009.posterapp.model.PosterModel;
 import sirkostya009.posterapp.service.PosterService;
+
+import java.util.List;
+
+import static sirkostya009.posterapp.util.UserUtils.userFromToken;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,8 +39,9 @@ public class PosterApi {
         return service.likePoster(id, userFromToken(token));
     }
 
-    private AppUser userFromToken(UsernamePasswordAuthenticationToken token) {
-        return (AppUser) token.getPrincipal();
+    @GetMapping("/by/{username}")
+    public List<PosterModel> userPosters(@PathVariable String username) {
+        return service.findAllByUsername(username);
     }
 
 }
