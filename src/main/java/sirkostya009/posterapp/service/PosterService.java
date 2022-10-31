@@ -20,7 +20,6 @@ public class PosterService {
 
     private final PosterRepo repo;
     private final static int postsPerSlice = 10;
-    private final UserService userService;
 
     public PosterModel getPoster(Long id) {
         return posterToModel(repo.findById(id)
@@ -30,7 +29,7 @@ public class PosterService {
     public PosterModel save(String posterText, AppUser user) {
         return posterToModel(repo.save(new Poster(
                 posterText,
-                user.getUsername()
+                user
         )));
     }
 
@@ -52,18 +51,17 @@ public class PosterService {
         return poster.getLikes().contains(user);
     }
 
-    public Page<PosterModel> findAllByUsername(String username, int pageNumber) {
-        var page = repo.findAllByAuthor(username, PageRequest.of(pageNumber, postsPerSlice));
+    public Page<PosterModel> findAllByUser(AppUser user, int pageNumber) {
+        var page = repo.findAllByAuthor(user, PageRequest.of(pageNumber, postsPerSlice));
         var result = postersToModels(page.getContent(), false);
         return new PageImpl<>(result, page.getPageable(), page.getTotalElements());
     }
 
     private PosterModel posterToModel(Poster poster, boolean includeUserInfo) {
-        var user = (AppUser) userService.loadUserByUsername(poster.getAuthor());
         return new PosterModel(
                 poster.getText(),
-                includeUserInfo ? UserInfo.fromAppUser(user) : null,
-                poster.getLikes().contains(user),
+                includeUserInfo ? UserInfo.fromAppUser(poster.getAuthor()) : null,
+                poster.getLikes().contains(poster.getAuthor()),
                 poster.getLikes().size(),
                 poster.getId()
         );

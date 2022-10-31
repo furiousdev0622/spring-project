@@ -19,14 +19,15 @@ public class Poster {
     private Long id;
     @Column(nullable = false)
     private String text;
-    @Column(nullable = false)
-    private String author;
+    @JoinColumn(nullable = false)
+    @ManyToOne
+    private AppUser author;
 
     @ManyToMany
     @ToString.Exclude
     private final Set<AppUser> likes = Set.of();
 
-    public Poster(String text, String author) {
+    public Poster(String text, AppUser author) {
         this.text = text;
         this.author = author;
     }

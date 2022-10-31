@@ -93,11 +93,11 @@ public class AppUser implements UserDetails {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof AppUser appUser)) return false;
-        return isExpired == appUser.isExpired && isLocked == appUser.isLocked && isCredentialsExpired == appUser.isCredentialsExpired && isEnabled == appUser.isEnabled && id.equals(appUser.id) && email.equals(appUser.email) && username.equals(appUser.username) && password.equals(appUser.password);
+        return username.equals(appUser.username) && password.equals(appUser.password);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, email, username, password, isExpired, isLocked, isCredentialsExpired, isEnabled);
+        return Objects.hash(id, email, username, password, isExpired, isLocked, isCredentialsExpired, isEnabled, bio);
     }
 }
