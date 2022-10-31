@@ -19,7 +19,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    private final JwtUtils jwtUtils;
+    private final JwtFilter jwtFilter;
     private final UserService userService;
 
     @Override
@@ -27,7 +27,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .sessionManagement().sessionCreationPolicy(STATELESS)
             .and()
-                .addFilterAfter(new JwtFilter(userService, jwtUtils), BasicAuthenticationFilter.class)
+                .addFilterAfter(jwtFilter, BasicAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/api/v1/register/**", "/api/v1/users/authenticate").permitAll()
                 .anyRequest().authenticated();
