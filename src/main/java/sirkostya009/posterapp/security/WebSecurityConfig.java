@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import sirkostya009.posterapp.auth.JwtFilter;
 import sirkostya009.posterapp.service.UserService;
-import sirkostya009.posterapp.util.JwtUtils;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
