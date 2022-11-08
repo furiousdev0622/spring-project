@@ -25,12 +25,10 @@ public class RegistrationApi {
     /**
      * receives a token string as a request param, validates if not validated, otherwise throws an error
      * @param token a random uuid
-     * @return just a response entity with "confirmed" string in body
      */
     @GetMapping("/confirm")
-    public String confirm(@RequestParam String token) {
+    public void confirm(@RequestParam String token) {
         service.confirm(token);
-        return "confirmed";
     }
 
 }
