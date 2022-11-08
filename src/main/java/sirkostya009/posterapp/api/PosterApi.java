@@ -23,14 +23,13 @@ public class PosterApi {
     }
 
     @GetMapping
-    @RequestMapping("/{id}")
-    public PosterModel getById(@PathVariable Long id) {
-        return posterService.getPoster(id);
-    }
-
-    @GetMapping
     public Page<PosterModel> all(@RequestParam(value = "page", defaultValue = "0") int page) {
         return posterService.findAll(page);
+    }
+
+    @GetMapping("/{id}")
+    public PosterModel getById(@PathVariable Long id) {
+        return posterService.getPoster(id);
     }
 
     @GetMapping("/like/{id}")

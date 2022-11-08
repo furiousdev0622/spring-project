@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @NoArgsConstructor
 @AllArgsConstructor
 public @Data class PosterModel {
@@ -12,4 +14,6 @@ public @Data class PosterModel {
     private boolean isLikedByYou;
     private int likes;
     private Long id;
+    private Date postedAt,
+                 lastEditAt;
 }

@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.Set;
 
 @Entity
@@ -27,8 +28,12 @@ public class Poster {
     @ToString.Exclude
     private final Set<AppUser> likes = Set.of();
 
+    private Date postedAt;
+    private Date lastEditedAt;
+
     public Poster(String text, AppUser author) {
         this.text = text;
         this.author = author;
+        postedAt = new Date();
     }
 }

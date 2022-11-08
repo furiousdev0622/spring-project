@@ -19,7 +19,7 @@ import java.util.List;
 public class PosterService {
 
     private final PosterRepo repo;
-    private final static int postsPerSlice = 10;
+    private final int postsPerSlice = 10;
 
     public PosterModel getPoster(Long id) {
         return posterToModel(repo.findById(id)
@@ -63,7 +63,9 @@ public class PosterService {
                 includeUserInfo ? UserInfo.fromAppUser(poster.getAuthor()) : null,
                 poster.getLikes().contains(poster.getAuthor()),
                 poster.getLikes().size(),
-                poster.getId()
+                poster.getId(),
+                poster.getPostedAt(),
+                poster.getLastEditedAt()
         );
     }
 
