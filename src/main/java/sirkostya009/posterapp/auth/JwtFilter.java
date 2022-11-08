@@ -41,7 +41,7 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        var user = userService.loadUserByUsername(username);
+        var user = userService.findByUsername(username);
 
         if (!jwtUtils.validateToken(jwt, user) || !user.isEnabled()) {
             chain.doFilter(request, response);

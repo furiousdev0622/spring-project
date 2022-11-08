@@ -26,8 +26,12 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return findByUsername(username);
+    }
+
+    public AppUser findByUsername(String username) {
         return repo.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("username " + username + " not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("username" + username + " not found"));
     }
 
     public AppUser findById(Long id) {
@@ -63,6 +67,6 @@ public class UserService implements UserDetailsService {
         var originalName = file.getOriginalFilename();
         var fileName = UUID.randomUUID() + originalName.substring(originalName.lastIndexOf('.'));
         Files.write(Path.of(ImagesPath + fileName), file.getBytes());
-        ((AppUser)loadUserByUsername(username)).setProfilePictureFilename(fileName);
+        findByUsername(username).setProfilePictureFilename(fileName);
     }
 }

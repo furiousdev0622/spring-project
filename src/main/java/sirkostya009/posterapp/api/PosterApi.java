@@ -39,7 +39,7 @@ public class PosterApi {
 
     @GetMapping("/by/{username}")
     public Page<PosterModel> userPosters(@PathVariable String username, @RequestParam(value = "value", defaultValue = "0") int page) {
-        return posterService.findAllByUser((AppUser) userService.loadUserByUsername(username), page);
+        return posterService.findAllByUser(userService.findByUsername(username), page);
     }
 
 }

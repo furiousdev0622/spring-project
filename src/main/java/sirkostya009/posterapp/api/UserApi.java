@@ -30,7 +30,7 @@ public class UserApi {
 
     @GetMapping("/{username}")
     public UserInfo getUser(@PathVariable String username) {
-        return UserInfo.fromAppUser((AppUser) userService.loadUserByUsername(username));
+        return UserInfo.fromAppUser(userService.findByUsername(username));
     }
 
     @GetMapping("/self")
