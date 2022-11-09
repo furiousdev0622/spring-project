@@ -19,7 +19,7 @@ import java.util.List;
 public class PosterService {
 
     private final PosterRepo repo;
-    private final int postsPerSlice = 10;
+    private final static int POSTS_PER_SLICE = 10;
 
     public PosterModel getPoster(Long id) {
         return posterToModel(repo.findById(id)
@@ -34,9 +34,10 @@ public class PosterService {
     }
 
     public Page<PosterModel> findAll(int page) {
-        var result = repo.findAll(PageRequest.of(page, postsPerSlice));
-        var contents = postersToModels(result.getContent());
-        return new PageImpl<>(contents, result.getPageable(), result.getTotalElements());
+        return postersToModels(
+                repo.findAll(pageRequest(page)),
+                true
+        );
     }
 
     @Transactional
@@ -51,10 +52,36 @@ public class PosterService {
         return poster.getLikes().contains(user);
     }
 
+    @Transactional
+    public void editPoster(String newText, Long id, AppUser user) {
+        var poster = getPoster(id);
+
+        if (poster.getAuthor().getId() != user.getId())
+            throw new IllegalStateException("poster ownership unfulfilled");
+
+        poster.setText(newText);
+    }
+
     public Page<PosterModel> findAllByUser(AppUser user, int pageNumber) {
-        var page = repo.findAllByAuthor(user, PageRequest.of(pageNumber, postsPerSlice));
-        var result = postersToModels(page.getContent(), false);
-        return new PageImpl<>(result, page.getPageable(), page.getTotalElements());
+        return postersToModels(
+                repo.findAllByAuthor(user, pageRequest(pageNumber)),
+                false
+        );
+    }
+
+    public Page<PosterModel> mostPopularPosters(Integer pageNumber) {
+        return postersToModels(
+                repo.findMostLikedPosters(pageRequest(pageNumber)),
+                true
+        );
+    }
+
+    private PageRequest pageRequest(Integer page) {
+        return PageRequest.of(page, POSTS_PER_SLICE);
+    }
+
+    private Page<PosterModel> postersToModels(Page<Poster> page, boolean includeUserInfo) {
+        return new PageImpl<>(postersToModels(page.getContent(), includeUserInfo), page.getPageable(), page.getTotalElements());
     }
 
     private PosterModel posterToModel(Poster poster, boolean includeUserInfo) {
@@ -75,10 +102,6 @@ public class PosterService {
 
     private List<PosterModel> postersToModels(List<Poster> posters, boolean includeUserInfo) {
         return posters.stream().map(poster -> posterToModel(poster, includeUserInfo)).toList();
-    }
-
-    private List<PosterModel> postersToModels(List<Poster> posters) {
-        return postersToModels(posters, true);
     }
 
 }
