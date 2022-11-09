@@ -8,8 +8,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import sirkostya009.posterapp.model.AppUser;
-import sirkostya009.posterapp.model.UserInfo;
+import sirkostya009.posterapp.model.privatized.AppUser;
+import sirkostya009.posterapp.model.publicized.UserInfo;
 import sirkostya009.posterapp.repo.UserRepo;
 
 import java.io.IOException;

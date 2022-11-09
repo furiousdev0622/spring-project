@@ -6,10 +6,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sirkostya009.posterapp.model.AppUser;
-import sirkostya009.posterapp.model.Poster;
-import sirkostya009.posterapp.model.PosterModel;
-import sirkostya009.posterapp.model.UserInfo;
+import sirkostya009.posterapp.model.privatized.AppUser;
+import sirkostya009.posterapp.model.privatized.Poster;
+import sirkostya009.posterapp.model.publicized.PosterModel;
+import sirkostya009.posterapp.model.publicized.UserInfo;
 import sirkostya009.posterapp.repo.PosterRepo;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package sirkostya009.posterapp.model;
+package sirkostya009.posterapp.model.privatized;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,8 +1,9 @@
-package sirkostya009.posterapp.model;
+package sirkostya009.posterapp.model.publicized;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import sirkostya009.posterapp.model.privatized.AppUser;
 
 @NoArgsConstructor
 @AllArgsConstructor

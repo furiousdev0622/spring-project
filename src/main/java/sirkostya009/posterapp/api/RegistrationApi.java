@@ -2,7 +2,7 @@ package sirkostya009.posterapp.api;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import sirkostya009.posterapp.model.RegistrationRequest;
+import sirkostya009.posterapp.model.publicized.RegistrationRequest;
 import sirkostya009.posterapp.service.RegistrationService;
 
 @RestController

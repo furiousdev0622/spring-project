@@ -3,7 +3,7 @@ package sirkostya009.posterapp.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import sirkostya009.posterapp.jwt.JwtGenerator;
-import sirkostya009.posterapp.model.Credentials;
+import sirkostya009.posterapp.model.publicized.Credentials;
 
 @Service
 @RequiredArgsConstructor

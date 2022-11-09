@@ -5,8 +5,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import sirkostya009.posterapp.model.Credentials;
-import sirkostya009.posterapp.model.UserInfo;
+import sirkostya009.posterapp.model.publicized.Credentials;
+import sirkostya009.posterapp.model.publicized.UserInfo;
 import sirkostya009.posterapp.service.AuthenticationService;
 import sirkostya009.posterapp.service.UserService;
 
