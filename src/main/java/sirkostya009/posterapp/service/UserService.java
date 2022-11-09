@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import sirkostya009.posterapp.model.AppUser;
+import sirkostya009.posterapp.model.UserInfo;
 import sirkostya009.posterapp.repo.UserRepo;
 
 import java.io.IOException;
@@ -26,18 +27,23 @@ public class UserService implements UserDetailsService {
     public final String ImagesPath = "D:/server/images/";
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) {
         return findByUsername(username);
     }
 
     public AppUser findByUsername(String username) {
         return repo.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("username" + username + " not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("username " + username + " not found"));
     }
 
     public AppUser findById(Long id) {
         return repo.findById(id)
                 .orElseThrow(() -> new RuntimeException("user with id " + id + " not found"));
+    }
+
+    @Transactional
+    public void edit(UserInfo info, String username) {
+        findByUsername(username).setBio(info.getBio());
     }
 
     public void registerUser(AppUser user) {
@@ -69,6 +75,14 @@ public class UserService implements UserDetailsService {
         var fileName = UUID.randomUUID() + originalName.substring(originalName.lastIndexOf('.'));
         Files.write(Path.of(ImagesPath + fileName), file.getBytes());
         findByUsername(username).setProfilePictureFilename(fileName);
+    }
+
+    @Transactional
+    public void changeEmail(String newEmail, String name) {
+    }
+
+    @Transactional
+    public void changePassword(String newPassword, String name) {
     }
 
 }

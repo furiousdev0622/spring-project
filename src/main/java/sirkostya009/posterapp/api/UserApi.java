@@ -22,28 +22,47 @@ public class UserApi {
     private final UserService userService;
     private final AuthenticationService authenticationService;
 
-    @PostMapping("/authenticate")
+    @PostMapping("/login")
     public String authenticate(@RequestBody Credentials credentials) {
         return authenticationService.authenticate(credentials);
     }
 
     @GetMapping("/{username}")
-    public UserInfo getUser(@PathVariable String username) {
+    public UserInfo user(@PathVariable String username) {
         return UserInfo.fromAppUser(userService.findByUsername(username));
     }
 
     @GetMapping("/self")
-    public UserInfo getUserInfo(JwtAuthenticationToken token) {
+    public UserInfo self(JwtAuthenticationToken token) {
         return UserInfo.fromAppUser(userService.findByUsername(token.getName()), true);
     }
 
+    @PostMapping("/edit")
+    public void edit(@RequestBody UserInfo info,
+                     JwtAuthenticationToken token) {
+        userService.edit(info, token.getName());
+    }
+
+    @PostMapping("/change-email")
+    public void changeEmail(@RequestBody String newEmail,
+                            JwtAuthenticationToken token) {
+        userService.changeEmail(newEmail, token.getName());
+    }
+
+    @PostMapping("/change-password")
+    public void changePassword(@RequestBody String newPassword,
+                               JwtAuthenticationToken token) {
+        userService.changePassword(newPassword, token.getName());
+    }
+
     @GetMapping(value = "/photo/{fileName}", produces = MediaType.IMAGE_JPEG_VALUE)
-    public byte[] getPhoto(@PathVariable String fileName) throws IOException {
+    public byte[] photo(@PathVariable String fileName) throws IOException {
         return Files.readAllBytes(Paths.get(userService.ImagesPath + fileName));
     }
 
-    @PostMapping("/photo/upload")
-    public void uploadImage(@RequestParam("image") MultipartFile file, JwtAuthenticationToken token) throws IOException {
+    @PostMapping("/photo-upload")
+    public void uploadPhoto(@RequestParam("image") MultipartFile file,
+                            JwtAuthenticationToken token) throws IOException {
         userService.saveImage(file, token.getName());
     }
 
