@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sirkostya009.posterapp.model.AppUser;
 import sirkostya009.posterapp.model.ConfirmationToken;
-import sirkostya009.posterapp.registration.RegistrationRequest;
+import sirkostya009.posterapp.model.RegistrationRequest;
 import sirkostya009.posterapp.repo.ConfirmationTokenRepo;
 
 import java.time.LocalDateTime;
@@ -50,4 +50,5 @@ public class RegistrationService {
 
         return token.getToken();
     }
+
 }

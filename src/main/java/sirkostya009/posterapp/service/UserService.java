@@ -19,6 +19,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
+
     private final UserRepo repo;
     private final PasswordEncoder encoder;
 
@@ -69,4 +70,5 @@ public class UserService implements UserDetailsService {
         Files.write(Path.of(ImagesPath + fileName), file.getBytes());
         findByUsername(username).setProfilePictureFilename(fileName);
     }
+
 }

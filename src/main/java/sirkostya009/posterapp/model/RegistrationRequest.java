@@ -1,4 +1,4 @@
-package sirkostya009.posterapp.registration;
+package sirkostya009.posterapp.model;
 
 import lombok.Data;
 

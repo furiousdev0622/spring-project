@@ -47,4 +47,5 @@ public class UserApi {
     public void uploadImage(@RequestParam("image") MultipartFile file, @AuthenticationPrincipal AppUser user) throws IOException {
         userService.saveImage(file, user.getUsername());
     }
+
 }

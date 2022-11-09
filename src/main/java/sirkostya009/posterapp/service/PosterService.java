@@ -80,4 +80,5 @@ public class PosterService {
     private List<PosterModel> postersToModels(List<Poster> posters) {
         return postersToModels(posters, true);
     }
+
 }
