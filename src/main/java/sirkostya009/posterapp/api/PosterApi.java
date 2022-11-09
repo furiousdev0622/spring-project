@@ -2,9 +2,8 @@ package sirkostya009.posterapp.api;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
-import sirkostya009.posterapp.model.AppUser;
 import sirkostya009.posterapp.model.PosterModel;
 import sirkostya009.posterapp.service.PosterService;
 import sirkostya009.posterapp.service.UserService;
@@ -18,8 +17,8 @@ public class PosterApi {
     private final UserService userService;
 
     @PostMapping
-    public PosterModel post(@RequestBody String posterText, @AuthenticationPrincipal AppUser user) {
-        return posterService.save(posterText, user);
+    public PosterModel post(@RequestBody String posterText, JwtAuthenticationToken token) {
+        return posterService.save(posterText, userService.findByUsername(token.getName()));
     }
 
     @GetMapping
@@ -33,8 +32,8 @@ public class PosterApi {
     }
 
     @GetMapping("/like/{id}")
-    public boolean like(@PathVariable long id, @AuthenticationPrincipal AppUser user) {
-        return posterService.likePoster(id, user);
+    public boolean like(@PathVariable long id, JwtAuthenticationToken token) {
+        return posterService.likePoster(id, userService.findByUsername(token.getName()));
     }
 
     @GetMapping("/by/{username}")

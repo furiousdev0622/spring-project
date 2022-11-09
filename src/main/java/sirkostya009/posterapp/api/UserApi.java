@@ -2,10 +2,9 @@ package sirkostya009.posterapp.api;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import sirkostya009.posterapp.model.AppUser;
 import sirkostya009.posterapp.model.Credentials;
 import sirkostya009.posterapp.model.UserInfo;
 import sirkostya009.posterapp.service.AuthenticationService;
@@ -34,8 +33,8 @@ public class UserApi {
     }
 
     @GetMapping("/self")
-    public UserInfo getUserInfo(@AuthenticationPrincipal AppUser user) {
-        return UserInfo.fromAppUser(user, true);
+    public UserInfo getUserInfo(JwtAuthenticationToken token) {
+        return UserInfo.fromAppUser(userService.findByUsername(token.getName()), true);
     }
 
     @GetMapping(value = "/photo/{fileName}", produces = MediaType.IMAGE_JPEG_VALUE)
@@ -44,8 +43,8 @@ public class UserApi {
     }
 
     @PostMapping("/photo/upload")
-    public void uploadImage(@RequestParam("image") MultipartFile file, @AuthenticationPrincipal AppUser user) throws IOException {
-        userService.saveImage(file, user.getUsername());
+    public void uploadImage(@RequestParam("image") MultipartFile file, JwtAuthenticationToken token) throws IOException {
+        userService.saveImage(file, token.getName());
     }
 
 }
