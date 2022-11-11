@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
+import sirkostya009.posterapp.model.Converter;
 import sirkostya009.posterapp.model.publicized.PosterModel;
 import sirkostya009.posterapp.service.PosterService;
 import sirkostya009.posterapp.service.UserService;
@@ -19,22 +20,28 @@ public class PosterApi {
     @PostMapping
     public PosterModel post(@RequestBody String posterText,
                             JwtAuthenticationToken token) {
-        return posterService.save(posterText, userService.findByUsername(token.getName()));
+        return Converter.posterModel(posterService.save(posterText, userService.findByUsername(token.getName())));
     }
 
     @GetMapping
     public Page<PosterModel> all(@RequestParam(value = "page", defaultValue = "0") Integer page) {
-        return posterService.findAll(page);
+        return Converter.pageOfPostersToPosterModels(
+                posterService.findAll(page),
+                true
+        );
     }
 
     @GetMapping("/popular")
     public Page<PosterModel> popular(@RequestParam(value = "page",  defaultValue = "0") Integer page) {
-        return posterService.mostPopularPosters(page);
+        return Converter.pageOfPostersToPosterModels(
+                posterService.mostPopularPosters(page),
+                true
+        );
     }
 
     @GetMapping("/{id}")
     public PosterModel id(@PathVariable Long id) {
-        return posterService.getPoster(id);
+        return Converter.posterModel(posterService.getPoster(id));
     }
 
     @GetMapping("/like/{id}")
@@ -53,7 +60,10 @@ public class PosterApi {
     @GetMapping("/by/{username}")
     public Page<PosterModel> userPosters(@PathVariable String username,
                                          @RequestParam(value = "value", defaultValue = "0") Integer page) {
-        return posterService.findAllByUser(userService.findByUsername(username), page);
+        return Converter.pageOfPostersToPosterModels(
+                posterService.findAllByUser(userService.findByUsername(username), page),
+                false
+        );
     }
 
 }

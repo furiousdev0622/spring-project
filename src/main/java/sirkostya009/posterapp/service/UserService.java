@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import sirkostya009.posterapp.model.privatized.AppUser;
-import sirkostya009.posterapp.model.publicized.UserInfo;
+import sirkostya009.posterapp.model.publicized.AppUserModel;
 import sirkostya009.posterapp.repo.UserRepo;
 
 import java.io.IOException;
@@ -42,7 +42,7 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public void edit(UserInfo info, String username) {
+    public void edit(AppUserModel info, String username) {
         findByUsername(username).setBio(info.getBio());
     }
 

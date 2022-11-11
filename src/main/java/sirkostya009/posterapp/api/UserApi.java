@@ -5,8 +5,9 @@ import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import sirkostya009.posterapp.model.Converter;
 import sirkostya009.posterapp.model.publicized.Credentials;
-import sirkostya009.posterapp.model.publicized.UserInfo;
+import sirkostya009.posterapp.model.publicized.AppUserModel;
 import sirkostya009.posterapp.service.AuthenticationService;
 import sirkostya009.posterapp.service.UserService;
 
@@ -28,17 +29,17 @@ public class UserApi {
     }
 
     @GetMapping("/{username}")
-    public UserInfo user(@PathVariable String username) {
-        return UserInfo.fromAppUser(userService.findByUsername(username));
+    public AppUserModel user(@PathVariable String username) {
+        return Converter.userInfo(userService.findByUsername(username));
     }
 
     @GetMapping("/self")
-    public UserInfo self(JwtAuthenticationToken token) {
-        return UserInfo.fromAppUser(userService.findByUsername(token.getName()), true);
+    public AppUserModel self(JwtAuthenticationToken token) {
+        return Converter.userInfo(userService.findByUsername(token.getName()), true);
     }
 
     @PostMapping("/edit")
-    public void edit(@RequestBody UserInfo info,
+    public void edit(@RequestBody AppUserModel info,
                      JwtAuthenticationToken token) {
         userService.edit(info, token.getName());
     }

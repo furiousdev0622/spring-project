@@ -2,17 +2,12 @@ package sirkostya009.posterapp.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sirkostya009.posterapp.model.privatized.AppUser;
 import sirkostya009.posterapp.model.privatized.Poster;
-import sirkostya009.posterapp.model.publicized.PosterModel;
-import sirkostya009.posterapp.model.publicized.UserInfo;
 import sirkostya009.posterapp.repo.PosterRepo;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -21,23 +16,20 @@ public class PosterService {
     private final PosterRepo repo;
     private final static int POSTS_PER_SLICE = 10;
 
-    public PosterModel getPoster(Long id) {
-        return posterToModel(repo.findById(id)
-                .orElseThrow(() -> new RuntimeException("poster with " + id + " not found")));
+    public Poster getPoster(Long id) {
+        return repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("poster with " + id + " not found"));
     }
 
-    public PosterModel save(String posterText, AppUser user) {
-        return posterToModel(repo.save(new Poster(
+    public Poster save(String posterText, AppUser user) {
+        return repo.save(new Poster(
                 posterText,
                 user
-        )));
+        ));
     }
 
-    public Page<PosterModel> findAll(int page) {
-        return postersToModels(
-                repo.findAll(pageRequest(page)),
-                true
-        );
+    public Page<Poster> findAll(int page) {
+        return repo.findAll(pageRequest(page));
     }
 
     @Transactional
@@ -62,46 +54,16 @@ public class PosterService {
         poster.setText(newText);
     }
 
-    public Page<PosterModel> findAllByUser(AppUser user, int pageNumber) {
-        return postersToModels(
-                repo.findAllByAuthor(user, pageRequest(pageNumber)),
-                false
-        );
+    public Page<Poster> findAllByUser(AppUser user, int pageNumber) {
+        return repo.findAllByAuthor(user, pageRequest(pageNumber));
     }
 
-    public Page<PosterModel> mostPopularPosters(Integer pageNumber) {
-        return postersToModels(
-                repo.findMostLikedPosters(pageRequest(pageNumber)),
-                true
-        );
+    public Page<Poster> mostPopularPosters(Integer pageNumber) {
+        return repo.findMostLikedPosters(pageRequest(pageNumber));
     }
 
     private PageRequest pageRequest(Integer page) {
         return PageRequest.of(page, POSTS_PER_SLICE);
-    }
-
-    private Page<PosterModel> postersToModels(Page<Poster> page, boolean includeUserInfo) {
-        return new PageImpl<>(postersToModels(page.getContent(), includeUserInfo), page.getPageable(), page.getTotalElements());
-    }
-
-    private PosterModel posterToModel(Poster poster, boolean includeUserInfo) {
-        return new PosterModel(
-                poster.getText(),
-                includeUserInfo ? UserInfo.fromAppUser(poster.getAuthor()) : null,
-                poster.getLikes().contains(poster.getAuthor()),
-                poster.getLikes().size(),
-                poster.getId(),
-                poster.getPostedAt(),
-                poster.getLastEditedAt()
-        );
-    }
-
-    private PosterModel posterToModel(Poster poster) {
-        return posterToModel(poster, true);
-    }
-
-    private List<PosterModel> postersToModels(List<Poster> posters, boolean includeUserInfo) {
-        return posters.stream().map(poster -> posterToModel(poster, includeUserInfo)).toList();
     }
 
 }
