@@ -5,7 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import sirkostya009.posterapp.model.Converter;
-import sirkostya009.posterapp.model.publicized.PosterModel;
+import sirkostya009.posterapp.model.common.PosterModel;
 import sirkostya009.posterapp.service.PosterService;
 import sirkostya009.posterapp.service.UserService;
 

@@ -3,9 +3,9 @@ package sirkostya009.posterapp.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sirkostya009.posterapp.model.privatized.AppUser;
-import sirkostya009.posterapp.model.privatized.ConfirmationToken;
-import sirkostya009.posterapp.model.publicized.RegistrationRequest;
+import sirkostya009.posterapp.model.dao.AppUser;
+import sirkostya009.posterapp.model.dao.ConfirmationToken;
+import sirkostya009.posterapp.model.common.RegistrationRequest;
 import sirkostya009.posterapp.repo.ConfirmationTokenRepo;
 
 import java.time.LocalDateTime;

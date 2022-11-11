@@ -1,4 +1,4 @@
-package sirkostya009.posterapp.model.publicized;
+package sirkostya009.posterapp.model.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

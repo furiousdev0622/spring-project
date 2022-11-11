@@ -4,10 +4,10 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import sirkostya009.posterapp.model.privatized.AppUser;
-import sirkostya009.posterapp.model.privatized.Poster;
-import sirkostya009.posterapp.model.publicized.PosterModel;
-import sirkostya009.posterapp.model.publicized.AppUserModel;
+import sirkostya009.posterapp.model.dao.AppUser;
+import sirkostya009.posterapp.model.dao.Poster;
+import sirkostya009.posterapp.model.common.PosterModel;
+import sirkostya009.posterapp.model.common.AppUserModel;
 
 import java.util.List;
 
