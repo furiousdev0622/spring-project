@@ -2,12 +2,15 @@ package sirkostya009.posterapp.api;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
-import sirkostya009.posterapp.model.Converter;
 import sirkostya009.posterapp.model.common.PosterModel;
+import sirkostya009.posterapp.model.dao.Poster;
 import sirkostya009.posterapp.service.PosterService;
 import sirkostya009.posterapp.service.UserService;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,20 +23,20 @@ public class PosterApi {
     @PostMapping
     public PosterModel post(@RequestBody String posterText,
                             JwtAuthenticationToken token) {
-        return Converter.posterModel(posterService.save(posterText, userService.findByUsername(token.getName())));
+        return PosterModel.of(posterService.save(posterText, userService.findByUsername(token.getName())), false);
     }
 
     @GetMapping
     public Page<PosterModel> all(@RequestParam(value = "page", defaultValue = "0") Integer page) {
-        return Converter.pageOfPostersToPosterModels(
-                posterService.findAll(page),
+        return pageOfPostersToPosterModels(
+                posterService.allPosters(page),
                 true
         );
     }
 
     @GetMapping("/popular")
     public Page<PosterModel> popular(@RequestParam(value = "page",  defaultValue = "0") Integer page) {
-        return Converter.pageOfPostersToPosterModels(
+        return pageOfPostersToPosterModels(
                 posterService.mostPopularPosters(page),
                 true
         );
@@ -41,7 +44,7 @@ public class PosterApi {
 
     @GetMapping("/{id}")
     public PosterModel id(@PathVariable Long id) {
-        return Converter.posterModel(posterService.getPoster(id));
+        return PosterModel.of(posterService.getPoster(id), true);
     }
 
     @GetMapping("/like/{id}")
@@ -60,10 +63,19 @@ public class PosterApi {
     @GetMapping("/by/{username}")
     public Page<PosterModel> userPosters(@PathVariable String username,
                                          @RequestParam(value = "value", defaultValue = "0") Integer page) {
-        return Converter.pageOfPostersToPosterModels(
-                posterService.findAllByUser(userService.findByUsername(username), page),
+        return pageOfPostersToPosterModels(
+                posterService.postersOfUser(userService.findByUsername(username), page),
                 false
         );
     }
+
+    private Page<PosterModel> pageOfPostersToPosterModels(Page<Poster> page, boolean includeUserInfo) {
+        return new PageImpl<>(listOfPostersToPosterModels(page.getContent(), includeUserInfo), page.getPageable(), page.getTotalElements());
+    }
+
+    private List<PosterModel> listOfPostersToPosterModels(List<Poster> posters, boolean includeUserInfo) {
+        return posters.stream().map(poster -> PosterModel.of(poster, includeUserInfo)).toList();
+    }
+
 
 }

@@ -17,18 +17,19 @@ public class ConfirmationToken {
     private Long id;
     @Column(nullable = false)
     private String token;
-    @Column(nullable = false)
-    private Long userId;
+    @OneToOne
+    @JoinColumn(nullable = false)
+    private AppUser appUser;
     @Column(nullable = false)
     private LocalDateTime expiresAt;
     @Column(nullable = false)
     private LocalDateTime issuedAt;
     private LocalDateTime confirmedAt;
 
-    public ConfirmationToken(String token, Long userId, LocalDateTime expiresAt, LocalDateTime issuedAt) {
+    public ConfirmationToken(String token, AppUser appUser, LocalDateTime issuedAt, LocalDateTime expiresAt) {
         this.token = token;
-        this.userId = userId;
-        this.expiresAt = expiresAt;
+        this.appUser = appUser;
         this.issuedAt = issuedAt;
+        this.expiresAt = expiresAt;
     }
 }

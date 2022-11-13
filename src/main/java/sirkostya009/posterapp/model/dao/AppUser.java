@@ -5,10 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Getter
@@ -27,13 +24,16 @@ public class AppUser implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    private String bio;
     private String profilePictureFilename = null;
 
     @OneToMany
     @ToString.Exclude
     private List<Poster> posters;
 
-    private String bio;
+    @ManyToMany
+    @ToString.Exclude
+    private Set<AppUser> following, followers;
 
     private boolean isExpired = false;
     private boolean isLocked = false;
@@ -48,7 +48,7 @@ public class AppUser implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Set.of();
+        return Collections.emptySet();
     }
 
     @Override

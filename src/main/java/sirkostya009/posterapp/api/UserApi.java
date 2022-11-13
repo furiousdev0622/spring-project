@@ -5,7 +5,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import sirkostya009.posterapp.model.Converter;
 import sirkostya009.posterapp.model.common.Credentials;
 import sirkostya009.posterapp.model.common.AppUserModel;
 import sirkostya009.posterapp.service.AuthenticationService;
@@ -30,18 +29,30 @@ public class UserApi {
 
     @GetMapping("/{username}")
     public AppUserModel user(@PathVariable String username) {
-        return Converter.userInfo(userService.findByUsername(username));
+        return AppUserModel.of(userService.findByUsername(username),false);
     }
 
     @GetMapping("/self")
     public AppUserModel self(JwtAuthenticationToken token) {
-        return Converter.userInfo(userService.findByUsername(token.getName()), true);
+        return AppUserModel.of(userService.findByUsername(token.getName()), true);
     }
 
     @PostMapping("/edit")
     public void edit(@RequestBody AppUserModel info,
                      JwtAuthenticationToken token) {
         userService.edit(info, token.getName());
+    }
+
+    @PostMapping("/follow/{username}")
+    public void follow(@PathVariable String username,
+                       JwtAuthenticationToken token) {
+        userService.follow(username, token.getName());
+    }
+
+    @PostMapping("/unfollow/{username}")
+    public void unfollow(@PathVariable String username,
+                         JwtAuthenticationToken token) {
+        userService.unfollow(username, token.getName());
     }
 
     @PostMapping("/change-email")
@@ -58,7 +69,7 @@ public class UserApi {
 
     @GetMapping(value = "/photo/{fileName}", produces = MediaType.IMAGE_JPEG_VALUE)
     public byte[] photo(@PathVariable String fileName) throws IOException {
-        return Files.readAllBytes(Paths.get(userService.ImagesPath + fileName));
+        return Files.readAllBytes(Paths.get(UserService.IMAGES_PATH + fileName));
     }
 
     @PostMapping("/photo-upload")

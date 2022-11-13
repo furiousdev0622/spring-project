@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
 
@@ -26,14 +27,21 @@ public class Poster {
 
     @ManyToMany
     @ToString.Exclude
-    private final Set<AppUser> likes = Set.of();
+    private Set<AppUser> likes;
+
+    @ManyToMany
+    @ToString.Exclude
+    private Set<Hashtag> hashtags;
 
     private Date postedAt;
     private Date lastEditedAt;
 
-    public Poster(String text, AppUser author) {
+    public Poster(String text, AppUser author, Set<Hashtag> hashtags) {
         this.text = text;
         this.author = author;
-        postedAt = new Date();
+        this.hashtags = hashtags;
+
+        this.likes = Collections.emptySet();
+        this.postedAt = new Date();
     }
 }

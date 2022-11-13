@@ -11,6 +11,6 @@ public interface PosterRepo extends JpaRepository<Poster, Long> {
     @Query("select p from Poster p where p.author = ?1")
     Page<Poster> findAllByAuthor(AppUser author, Pageable pageable);
 
-    @Query("select p from Poster p ORDER BY p.likes.size")
+    @Query("select p from Poster p ORDER BY size(p.likes)")
     Page<Poster> findMostLikedPosters(Pageable pageable);
 }

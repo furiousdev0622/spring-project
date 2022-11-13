@@ -6,35 +6,91 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sirkostya009.posterapp.model.dao.AppUser;
+import sirkostya009.posterapp.model.dao.Hashtag;
 import sirkostya009.posterapp.model.dao.Poster;
+import sirkostya009.posterapp.repo.HashtagRepo;
 import sirkostya009.posterapp.repo.PosterRepo;
+
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
 public class PosterService {
 
-    private final PosterRepo repo;
+    private final PosterRepo posterRepo;
+    private final HashtagRepo hashtagRepo;
+
     private final static int POSTS_PER_SLICE = 10;
+    private final static char[] CHARACTERS = ",!@#$%^&*()-+=|\\/?.№\";%:*~`'".toCharArray();
 
     public Poster getPoster(Long id) {
-        return repo.findById(id)
+        return posterRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("poster with " + id + " not found"));
     }
 
+    @Transactional
     public Poster save(String posterText, AppUser user) {
-        return repo.save(new Poster(
-                posterText,
-                user
-        ));
+        return posterRepo.save(
+                new Poster(
+                        posterText,
+                        user,
+                        parseHashtags(posterText)
+                )
+        );
     }
 
-    public Page<Poster> findAll(int page) {
-        return repo.findAll(pageRequest(page));
+    private Set<Hashtag> parseHashtags(String posterText) {
+        var result = new HashSet<Hashtag>();
+
+        Stream.of(posterText.split(" "))
+                .map(this::parseTag)
+                .filter(Objects::nonNull)
+                .map(tag -> {
+                    var hashtag = hashtagRepo.findByTagIsIgnoreCase(tag)
+                            .orElseGet(() -> hashtagRepo.save(new Hashtag(tag)));
+                    hashtag.incrementMentions();
+                    return hashtag;
+                })
+                .forEach(result::add); // TODO: fix incrementation
+
+        return result;
+    }
+
+    private String parseTag(String suspect) {
+        if (!suspect.startsWith("#")) return null;
+
+        var split = suspect.split("#");
+
+        if (split.length == 0) return null;
+
+        if (!split[0].equals("") || split.length == 1) return null;
+
+        var tag = split[1];
+        var maxIndex = 0;
+        boolean doesntEndWithALetter = false;
+
+        for (; maxIndex < tag.length(); ++maxIndex)
+            for (var i : CHARACTERS)
+                if (i == tag.charAt(maxIndex)) {
+                    doesntEndWithALetter = true;
+                    break;
+                }
+
+        if (0 == maxIndex) return null;
+
+        return tag.substring(0, doesntEndWithALetter ? maxIndex - 1 : maxIndex);
+    }
+
+    public Page<Poster> allPosters(int page) {
+        return posterRepo.findAll(pageRequest(page));
     }
 
     @Transactional
     public boolean likePoster(Long id, AppUser user) {
-        var poster = repo.findById(id)
+        var poster = posterRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("poster doesnt not exist"));
 
         if (poster.getLikes().contains(user))
@@ -48,18 +104,18 @@ public class PosterService {
     public void editPoster(String newText, Long id, AppUser user) {
         var poster = getPoster(id);
 
-        if (poster.getAuthor().getId() != user.getId())
+        if (!poster.getAuthor().getId().equals(user.getId()))
             throw new IllegalStateException("poster ownership unfulfilled");
 
         poster.setText(newText);
     }
 
-    public Page<Poster> findAllByUser(AppUser user, int pageNumber) {
-        return repo.findAllByAuthor(user, pageRequest(pageNumber));
+    public Page<Poster> postersOfUser(AppUser user, int pageNumber) {
+        return posterRepo.findAllByAuthor(user, pageRequest(pageNumber));
     }
 
     public Page<Poster> mostPopularPosters(Integer pageNumber) {
-        return repo.findMostLikedPosters(pageRequest(pageNumber));
+        return posterRepo.findMostLikedPosters(pageRequest(pageNumber));
     }
 
     private PageRequest pageRequest(Integer page) {

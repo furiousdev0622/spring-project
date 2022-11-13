@@ -5,8 +5,9 @@ A little twitter-esque pet project of mine with simple auth. Made only to broade
 ## TODO
 
 - Ability to change email, password
-- Documentation
 - Think of a way to recommend a user posts:
-- - Add "follow" feature
-- - Add hashtags
+  - ~~Add "follow" feature~~
+  - ~~Add hashtags~~
+  - Implement a recommendations-serving algorithm
 - Tests...
+- Documentation

@@ -6,5 +6,5 @@ import sirkostya009.posterapp.model.dao.ConfirmationToken;
 import java.util.Optional;
 
 public interface ConfirmationTokenRepo extends JpaRepository<ConfirmationToken, Long> {
-    Optional<ConfirmationToken> findFirstByToken(String token);
+    Optional<ConfirmationToken> findByToken(String token);
 }
