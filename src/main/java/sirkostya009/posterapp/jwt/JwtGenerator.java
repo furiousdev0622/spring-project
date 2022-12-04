@@ -12,7 +12,7 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtGenerator {
 
-    private final static long FOURTEEN_DAYS_IN_MILLISECONDS = (long) 1.21e+9;
+    private final static long EXPIRATION_TIME_IN_MILLISECONDS = (long) 1.21e+9; // 14 days
 
     private final SecretKey secretKey;
 
@@ -21,7 +21,7 @@ public class JwtGenerator {
                 .setIssuedAt(new Date())
                 .setSubject(subject)
                 .setIssuer(JwtConfig.ISSUER)
-                .setExpiration(new Date(System.currentTimeMillis() + FOURTEEN_DAYS_IN_MILLISECONDS))
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME_IN_MILLISECONDS))
                 .signWith(secretKey)
                 .compact();
     }

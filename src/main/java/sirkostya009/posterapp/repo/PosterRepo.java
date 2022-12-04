@@ -8,9 +8,9 @@ import sirkostya009.posterapp.model.dao.AppUser;
 import sirkostya009.posterapp.model.dao.Poster;
 
 public interface PosterRepo extends JpaRepository<Poster, Long> {
-    @Query("select p from Poster p where p.author = ?1")
+    @Query("select p from Poster p where p.author = ?1 order by p.postedAt desc")
     Page<Poster> findAllByAuthor(AppUser author, Pageable pageable);
 
-    @Query("select p from Poster p ORDER BY size(p.likes)")
-    Page<Poster> findMostLikedPosters(Pageable pageable);
+    @Query("select p from Poster p where upper(p.text) like upper(concat('%', ?1, '%')) order by size(p.likes), p.postedAt desc")
+    Page<Poster> findMostPopularWithTag(String hashtag, Pageable pageable);
 }

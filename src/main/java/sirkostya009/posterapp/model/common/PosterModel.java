@@ -2,6 +2,7 @@ package sirkostya009.posterapp.model.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import sirkostya009.posterapp.model.dao.AppUser;
 import sirkostya009.posterapp.model.dao.Hashtag;
 import sirkostya009.posterapp.model.dao.Poster;
 
@@ -20,11 +21,11 @@ public @Data class PosterModel {
     private Date lastEditAt;
     private Set<String> hashtags;
 
-    public static PosterModel of(Poster poster, boolean includeUserInfo) {
+    public static PosterModel of(Poster poster, AppUser requester, boolean includeUserInfo) {
         return new PosterModel(
                 poster.getText(),
                 includeUserInfo ? AppUserModel.of(poster.getAuthor(), false) : null,
-                poster.getLikes().contains(poster.getAuthor()),
+                poster.getLikes().contains(requester),
                 poster.getLikes().size(),
                 poster.getId(),
                 poster.getPostedAt(),

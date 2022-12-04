@@ -29,7 +29,7 @@ public class UserApi {
 
     @GetMapping("/{username}")
     public AppUserModel user(@PathVariable String username) {
-        return AppUserModel.of(userService.findByUsername(username),false);
+        return AppUserModel.of(userService.findByUsername(username), false);
     }
 
     @GetMapping("/self")

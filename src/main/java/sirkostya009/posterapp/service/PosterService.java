@@ -2,6 +2,7 @@ package sirkostya009.posterapp.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,9 +12,8 @@ import sirkostya009.posterapp.model.dao.Poster;
 import sirkostya009.posterapp.repo.HashtagRepo;
 import sirkostya009.posterapp.repo.PosterRepo;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -23,7 +23,7 @@ public class PosterService {
     private final PosterRepo posterRepo;
     private final HashtagRepo hashtagRepo;
 
-    private final static int POSTS_PER_SLICE = 10;
+    private final static int POSTS_PER_PAGE = 10;
     private final static char[] CHARACTERS = ",!@#$%^&*()-+=|\\/?.№\";%:*~`'".toCharArray();
 
     public Poster getPoster(Long id) {
@@ -43,18 +43,14 @@ public class PosterService {
     }
 
     private Set<Hashtag> parseHashtags(String posterText) {
-        var result = new HashSet<Hashtag>();
-
-        Stream.of(posterText.split(" "))
+        var result = Stream.of(posterText.split(" "))
                 .map(this::parseTag)
                 .filter(Objects::nonNull)
-                .map(tag -> {
-                    var hashtag = hashtagRepo.findByTagIsIgnoreCase(tag)
-                            .orElseGet(() -> hashtagRepo.save(new Hashtag(tag)));
-                    hashtag.incrementMentions();
-                    return hashtag;
-                })
-                .forEach(result::add); // TODO: fix incrementation
+                .map(tag -> hashtagRepo.findByTagIgnoreCase(tag)
+                        .orElseGet(() -> hashtagRepo.save(new Hashtag(tag))))
+                .collect(Collectors.toSet());
+
+        result.forEach(Hashtag::incrementMentions); // for some reason I cant do this directly inside map method
 
         return result;
     }
@@ -84,8 +80,20 @@ public class PosterService {
         return tag.substring(0, doesntEndWithALetter ? maxIndex - 1 : maxIndex);
     }
 
-    public Page<Poster> allPosters(int page) {
-        return posterRepo.findAll(pageRequest(page));
+    public Page<Poster> recommendation(int page, AppUser user) {
+        var postersByUser = posterRepo.findAllByAuthor(user, pageRequest(page));
+
+        if (postersByUser.getContent().isEmpty()) return popular(page);
+
+        var recommended = postersByUser.stream()
+                .map(Poster::getHashtags)
+                .flatMap(Collection::stream)
+                .flatMap(hashtag -> posterRepo.findMostPopularWithTag(hashtag.getTag(), pageRequest(page)).stream())
+                .distinct()
+                .sorted(Comparator.reverseOrder())
+                .toList();
+
+        return new PageImpl<>(recommended, pageRequest(page), recommended.size());
     }
 
     @Transactional
@@ -101,25 +109,38 @@ public class PosterService {
     }
 
     @Transactional
-    public void editPoster(String newText, Long id, AppUser user) {
+    public Poster editPoster(String newText, Long id, AppUser user) {
         var poster = getPoster(id);
 
         if (!poster.getAuthor().getId().equals(user.getId()))
             throw new IllegalStateException("poster ownership unfulfilled");
 
+        poster.getHashtags().forEach(Hashtag::decrementMentions);
+
         poster.setText(newText);
+        poster.setLastEditedAt(new Date());
+        poster.setHashtags(parseHashtags(newText));
+
+        return poster;
     }
 
     public Page<Poster> postersOfUser(AppUser user, int pageNumber) {
         return posterRepo.findAllByAuthor(user, pageRequest(pageNumber));
     }
 
-    public Page<Poster> mostPopularPosters(Integer pageNumber) {
-        return posterRepo.findMostLikedPosters(pageRequest(pageNumber));
+    public Page<Poster> popular(int page) {
+        var tags = hashtagRepo.findByMostMentions(pageRequest(page));
+        var posters = new HashSet<Poster>(tags.getNumberOfElements());
+
+        tags.getContent().forEach(hashtag ->
+                posters.addAll(posterRepo.findMostPopularWithTag(hashtag.getTag(), pageRequest(page)).getContent())
+        );
+
+        return new PageImpl<>(posters.stream().toList(), pageRequest(page), posters.size());
     }
 
     private PageRequest pageRequest(Integer page) {
-        return PageRequest.of(page, POSTS_PER_SLICE);
+        return PageRequest.of(page, POSTS_PER_PAGE);
     }
 
 }

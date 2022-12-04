@@ -31,7 +31,7 @@ public class AppUser implements UserDetails {
     @ToString.Exclude
     private List<Poster> posters;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @ToString.Exclude
     private Set<AppUser> following, followers;
 
