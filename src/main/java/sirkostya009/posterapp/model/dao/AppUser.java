@@ -87,6 +87,9 @@ public class AppUser implements UserDetails {
         isEnabled = true;
     }
 
+    /**
+     * @deprecated reserved for future use
+     */
     public void disable() {
         isEnabled = false;
     }

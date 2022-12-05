@@ -43,6 +43,9 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("username " + username + " not found"));
     }
 
+    /**
+     * @deprecated reserved for future use
+     */
     public AppUser findById(Long id) {
         return userRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("user with id " + id + " not found"));
@@ -61,6 +64,9 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new RuntimeException("login " + login + " not found"));
     }
 
+    /**
+     * @deprecated reserved for future use
+     */
     public AppUser findByEmail(String email) {
         return userRepo.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("email " + email + " not found"));
