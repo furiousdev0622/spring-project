@@ -77,7 +77,7 @@ public class PosterApi {
                                          @RequestParam(name = "value", defaultValue = "0") Integer page,
                                          JwtAuthenticationToken token) {
         return pageOfPostersToPosterModels(
-                posterService.postersOfUser(userService.findByUsername(username), page),
+                posterService.postersByUser(userService.findByUsername(username), page),
                 userService.findByUsername(token.getName()),
                 false
         );

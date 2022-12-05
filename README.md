@@ -4,7 +4,7 @@ A little twitter-esque pet project of mine with simple auth. Created exclusively
 
 ## TODO
 
-- Ability to change email, password
+- ~~Ability to change email, password~~
 - ~~Think of a way to recommend a user posts:~~
   - ~~Add "follow" feature~~
   - ~~Add hashtags~~

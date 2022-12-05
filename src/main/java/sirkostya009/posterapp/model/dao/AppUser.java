@@ -17,7 +17,6 @@ public class AppUser implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Column(nullable = false)
     private String email;
     @Column(nullable = false)
     private String username;
@@ -98,6 +97,6 @@ public class AppUser implements UserDetails {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, email, username, password, isExpired, isLocked, isCredentialsExpired, isEnabled, bio);
+        return Objects.hash(id, username, password, isExpired, isLocked, isCredentialsExpired, isEnabled, bio);
     }
 }

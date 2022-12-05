@@ -4,23 +4,32 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import sirkostya009.posterapp.email.ConfirmationEmailSender;
+import sirkostya009.posterapp.email.EmailSender;
 import sirkostya009.posterapp.model.common.AppUserModel;
 import sirkostya009.posterapp.model.dao.AppUser;
+import sirkostya009.posterapp.model.dao.ConfirmationToken;
+import sirkostya009.posterapp.repo.ConfirmationTokenRepo;
 import sirkostya009.posterapp.repo.UserRepo;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
 
-    private final UserRepo repo;
+    private final UserRepo userRepo;
+    private final ConfirmationTokenRepo tokenRepo;
+    private final EmailSender emailSender;
+    private final PasswordEncoder encoder;
 
     public final static String IMAGES_PATH = "D:/server/images/";
 
@@ -30,27 +39,30 @@ public class UserService implements UserDetailsService {
     }
 
     public AppUser findByUsername(String username) {
-        return repo.findByUsername(username)
+        return userRepo.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("username " + username + " not found"));
     }
 
     public AppUser findById(Long id) {
-        return repo.findById(id)
+        return userRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("user with id " + id + " not found"));
     }
 
     @Transactional
-    public void edit(AppUserModel info, String username) {
-        findByUsername(username).setBio(info.getBio());
+    public void edit(AppUserModel userModel, String username) {
+        findByUsername(username).setBio(userModel.getBio());
+
+        if (userModel.getEmail() != null)
+            changeEmail(userModel.getEmail(), username);
     }
 
     public AppUser findByLogin(String login) {
-        return repo.findByUsernameOrEmail(login, login)
+        return userRepo.findByUsernameOrEmail(login, login)
                 .orElseThrow(() -> new RuntimeException("login " + login + " not found"));
     }
 
     public AppUser findByEmail(String email) {
-        return repo.findByEmail(email)
+        return userRepo.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("email " + email + " not found"));
     }
 
@@ -64,11 +76,29 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public void changeEmail(String newEmail, String name) {
+    public boolean changeEmail(String newEmail, String username) {
+        var token = tokenRepo.save(new ConfirmationToken(
+                UUID.randomUUID().toString(),
+                findByUsername(username),
+                newEmail,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusMinutes(15)
+        )).getToken();
+
+        emailSender.send(newEmail, "Confirm new email", ConfirmationEmailSender.generateMail(token));
+
+        return true;
     }
 
     @Transactional
-    public void changePassword(String newPassword, String name) {
+    public boolean changePassword(String newPassword, String oldPassword, String username) {
+        var user = findByUsername(username);
+
+        if (!encoder.matches(oldPassword, user.getPassword())) return false;
+
+        user.setPassword(encoder.encode(newPassword));
+
+        return true;
     }
 
     @Transactional

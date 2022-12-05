@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import sirkostya009.posterapp.model.common.Credentials;
 import sirkostya009.posterapp.model.common.AppUserModel;
+import sirkostya009.posterapp.model.common.ChangeSettingsRequest;
 import sirkostya009.posterapp.service.AuthenticationService;
 import sirkostya009.posterapp.service.UserService;
 
@@ -56,15 +57,15 @@ public class UserApi {
     }
 
     @PostMapping("/change-email")
-    public void changeEmail(@RequestBody String newEmail,
+    public boolean changeEmail(@RequestBody ChangeSettingsRequest request,
                             JwtAuthenticationToken token) {
-        userService.changeEmail(newEmail, token.getName());
+        return userService.changeEmail(request.getNewEmail(), token.getName());
     }
 
     @PostMapping("/change-password")
-    public void changePassword(@RequestBody String newPassword,
+    public boolean changePassword(@RequestBody ChangeSettingsRequest request,
                                JwtAuthenticationToken token) {
-        userService.changePassword(newPassword, token.getName());
+        return userService.changePassword(request.getNewPassword(), request.getOldPassword(), token.getName());
     }
 
     @GetMapping(value = "/photo/{fileName}", produces = MediaType.IMAGE_JPEG_VALUE)

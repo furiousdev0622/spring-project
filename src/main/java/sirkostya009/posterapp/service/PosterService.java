@@ -33,13 +33,7 @@ public class PosterService {
 
     @Transactional
     public Poster save(String posterText, AppUser user) {
-        return posterRepo.save(
-                new Poster(
-                        posterText,
-                        user,
-                        parseHashtags(posterText)
-                )
-        );
+        return posterRepo.save(new Poster(posterText, user, parseHashtags(posterText)));
     }
 
     private Set<Hashtag> parseHashtags(String posterText) {
@@ -124,7 +118,7 @@ public class PosterService {
         return poster;
     }
 
-    public Page<Poster> postersOfUser(AppUser user, int pageNumber) {
+    public Page<Poster> postersByUser(AppUser user, int pageNumber) {
         return posterRepo.findAllByAuthor(user, pageRequest(pageNumber));
     }
 
