@@ -11,4 +11,4 @@ A little twitter-esque pet project of mine with simple auth. Created exclusively
   - ~~Implement a recommendations-serving algorithm~~
 - UI
 - Tests...
-- Documentation
+- ~~Documentation~~

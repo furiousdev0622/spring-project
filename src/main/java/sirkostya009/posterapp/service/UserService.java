@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import sirkostya009.posterapp.email.ConfirmationEmailSender;
 import sirkostya009.posterapp.email.EmailSender;
-import sirkostya009.posterapp.model.common.AppUserModel;
+import sirkostya009.posterapp.model.common.ChangeSettingsRequest;
 import sirkostya009.posterapp.model.dao.AppUser;
 import sirkostya009.posterapp.model.dao.ConfirmationToken;
 import sirkostya009.posterapp.repo.ConfirmationTokenRepo;
@@ -49,11 +49,11 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public void edit(AppUserModel userModel, String username) {
+    public void edit(ChangeSettingsRequest userModel, String username) {
         findByUsername(username).setBio(userModel.getBio());
 
-        if (userModel.getEmail() != null)
-            changeEmail(userModel.getEmail(), username);
+        if (userModel.getNewEmail() != null)
+            changeEmail(userModel.getNewEmail(), username);
     }
 
     public AppUser findByLogin(String login) {

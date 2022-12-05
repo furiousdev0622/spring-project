@@ -14,6 +14,15 @@ public class AuthenticationService {
     private final JwtGenerator generator;
     private final PasswordEncoder encoder;
 
+    /**
+     * Finds a user by login (email or username match),
+     * checks if user is enabled,
+     * checks if user's password matches the provided one,
+     * then generates a bearer token
+     * @param credentials a wrapper with long and password fields
+     * @return bearer token
+     * @throws IllegalStateException if any of the above conditions are false
+     */
     public String authenticate(Credentials credentials) {
         var user = userService.findByLogin(credentials.getLogin());
 

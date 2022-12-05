@@ -8,6 +8,9 @@ import sirkostya009.posterapp.security.JwtConfig;
 import javax.crypto.SecretKey;
 import java.util.Date;
 
+/**
+ * Generates a JWT bearer token
+ */
 @Component
 @RequiredArgsConstructor
 public class JwtGenerator {

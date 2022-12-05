@@ -24,6 +24,15 @@ public class RegistrationService {
     private final PasswordEncoder encoder;
     private final EmailSender emailSender;
 
+    /**
+     * Checks if token exists,
+     * checks if token hasn't been confirmed yet,
+     * enables the user token points to,
+     * sets the email to the user,
+     * sets token as confirmed.
+     * @param token token string to confirm
+     * @throws RuntimeException if any of the above conditions fail
+     */
     @Transactional
     public void confirm(String token) {
         var confirmationToken = tokenRepo.findByToken(token)
@@ -41,6 +50,16 @@ public class RegistrationService {
         confirmationToken.setConfirmedAt(LocalDateTime.now());
     }
 
+    /**
+     * Checks if provided username wasn't taken,
+     * checks if provided email wasn't taken,
+     * creates and saves user with encoded password to repo,
+     * creates a token that points to newly created user,
+     * sends an email to the provided email address
+     * @param request a wrapper with username, email, and password fields
+     * @return confirmation token string to confirm
+     * @throws RuntimeException if any of the above conditions fail
+     */
     public String register(RegistrationRequest request) {
         if (userRepo.findByUsername(request.getUsername()).isPresent())
             throw new RuntimeException("username already taken");
@@ -48,15 +67,13 @@ public class RegistrationService {
         if (userRepo.findByEmail(request.getEmail()).isPresent())
             throw new RuntimeException("email already taken");
 
-        var user = userRepo.save(new AppUser(
-                null,
-                request.getUsername(),
-                encoder.encode(request.getPassword())
-        ));
-
         var token = tokenRepo.save(new ConfirmationToken(
                 UUID.randomUUID().toString(),
-                user,
+                userRepo.save(new AppUser(
+                        null,
+                        request.getUsername(),
+                        encoder.encode(request.getPassword())
+                )),
                 request.getEmail(),
                 LocalDateTime.now(),
                 LocalDateTime.now().plusMinutes(15)

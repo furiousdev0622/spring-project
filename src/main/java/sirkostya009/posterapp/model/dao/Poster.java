@@ -9,6 +9,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import javax.persistence.*;
 
+/**
+ * A poster model that is stored in database
+ */
 @Entity
 @Getter
 @Setter

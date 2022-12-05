@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 
+/**
+ * An implementation of EmailSender interface that sends ConfirmationTokens to users
+ */
 @Slf4j
 @Service
 @AllArgsConstructor

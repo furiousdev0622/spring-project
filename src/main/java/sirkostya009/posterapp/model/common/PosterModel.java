@@ -10,6 +10,9 @@ import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * A poster model that is served to the client
+ */
 @AllArgsConstructor
 public @Data class PosterModel {
     private String text;

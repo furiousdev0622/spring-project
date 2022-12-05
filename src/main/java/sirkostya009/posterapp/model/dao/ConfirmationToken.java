@@ -5,6 +5,10 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+/**
+ * A confirmation token model that is stored in database
+ * Whenever confirmed, sets email to the user it points to
+ */
 @Entity
 @Setter
 @Getter

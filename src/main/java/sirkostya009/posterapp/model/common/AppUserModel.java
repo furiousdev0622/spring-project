@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import sirkostya009.posterapp.model.dao.AppUser;
 
+/**
+ * A user model that is served to the client
+ */
 @AllArgsConstructor
 public @Data class AppUserModel {
     private long id;
