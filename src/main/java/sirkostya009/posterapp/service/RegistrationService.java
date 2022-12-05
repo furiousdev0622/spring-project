@@ -67,21 +67,23 @@ public class RegistrationService {
         if (userRepo.findByEmail(request.getEmail()).isPresent())
             throw new RuntimeException("email already taken");
 
-        var token = tokenRepo.save(new ConfirmationToken(
+        var user = new AppUser(request.getUsername(), encoder.encode(request.getPassword()));
+
+        var token = new ConfirmationToken(
                 UUID.randomUUID().toString(),
-                userRepo.save(new AppUser(
-                        null,
-                        request.getUsername(),
-                        encoder.encode(request.getPassword())
-                )),
+                user,
                 request.getEmail(),
                 LocalDateTime.now(),
                 LocalDateTime.now().plusMinutes(15)
-        )).getToken();
+        );
 
-        emailSender.send(request.getEmail(), "Confirm email", ConfirmationEmailSender.generateMail(token));
+        emailSender.send(request.getEmail(), "Confirm email", ConfirmationEmailSender.generateBody(token.getToken()));
 
-        return token;
+        // save user and token only after email has been successfully sent
+        userRepo.save(user);
+        tokenRepo.save(token);
+
+        return token.getToken();
     }
 
 }

@@ -35,7 +35,7 @@ public class ConfirmationEmailSender implements EmailSender {
         sender.send(message);
     }
 
-    public static String generateMail(String token) {
+    public static String generateBody(String token) {
         return "<p>Click <a href=\"http://localhost:8080/api/v1/register/confirm?token="+token+"\">here</a> to confirm yo email</p>";
     }
 

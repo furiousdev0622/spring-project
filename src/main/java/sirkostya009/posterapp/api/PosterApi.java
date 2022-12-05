@@ -1,8 +1,8 @@
 package sirkostya009.posterapp.api;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import sirkostya009.posterapp.model.common.PosterModel;
@@ -41,9 +41,9 @@ public class PosterApi {
      * @return page of posters
      */
     @GetMapping
-    public Page<PosterModel> all(@RequestParam(name = "page", defaultValue = "0") Integer page,
-                                 JwtAuthenticationToken token) {
-        return pageOfPostersToPosterModels(
+    public Slice<PosterModel> all(@RequestParam(name = "page", defaultValue = "0") Integer page,
+                                  JwtAuthenticationToken token) {
+        return sliceOfPostersToPosterModels(
                 posterService.recommendation(page, userService.findByUsername(token.getName())),
                 userService.findByUsername(token.getName()),
                 true
@@ -57,9 +57,9 @@ public class PosterApi {
      * @return page of popular posters
      */
     @GetMapping("/popular")
-    public Page<PosterModel> popular(@RequestParam(name = "page",  defaultValue = "0") Integer page,
-                                     JwtAuthenticationToken token) {
-        return pageOfPostersToPosterModels(
+    public Slice<PosterModel> popular(@RequestParam(name = "page",  defaultValue = "0") Integer page,
+                                      JwtAuthenticationToken token) {
+        return sliceOfPostersToPosterModels(
                 posterService.popular(page),
                 userService.findByUsername(token.getName()),
                 true
@@ -83,7 +83,7 @@ public class PosterApi {
      * Likes post by the current user
      * @param id id of a poster to like
      * @param token an object that holds current user's username
-     * @return true or false whether if user has liked or disliked the post
+     * @return true or false whether the user has liked or disliked the post
      * @exception RuntimeException if no poster was found
      */
     @GetMapping("/like/{id}")
@@ -121,21 +121,21 @@ public class PosterApi {
      * @exception RuntimeException if no poster or username were found
      */
     @GetMapping("/by/{username}")
-    public Page<PosterModel> userPosters(@PathVariable String username,
-                                         @RequestParam(name = "value", defaultValue = "0") Integer page,
-                                         JwtAuthenticationToken token) {
-        return pageOfPostersToPosterModels(
+    public Slice<PosterModel> userPosters(@PathVariable String username,
+                                          @RequestParam(name = "value", defaultValue = "0") Integer page,
+                                          JwtAuthenticationToken token) {
+        return sliceOfPostersToPosterModels(
                 posterService.postersByUser(userService.findByUsername(username), page),
                 userService.findByUsername(token.getName()),
                 false
         );
     }
 
-    private Page<PosterModel> pageOfPostersToPosterModels(Page<Poster> page, AppUser requester, boolean includeUserInfo) {
-        return new PageImpl<>(
-                listOfPostersToPosterModels(page.getContent(), requester, includeUserInfo),
-                page.getPageable(),
-                page.getTotalElements()
+    private Slice<PosterModel> sliceOfPostersToPosterModels(Slice<Poster> slice, AppUser requester, boolean includeUserInfo) {
+        return new SliceImpl<>(
+                listOfPostersToPosterModels(slice.getContent(), requester, includeUserInfo),
+                slice.getPageable(),
+                slice.hasNext()
         );
     }
 

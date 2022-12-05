@@ -1,9 +1,9 @@
 package sirkostya009.posterapp.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sirkostya009.posterapp.model.dao.AppUser;
@@ -12,6 +12,7 @@ import sirkostya009.posterapp.model.dao.Poster;
 import sirkostya009.posterapp.repo.HashtagRepo;
 import sirkostya009.posterapp.repo.PosterRepo;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -87,7 +88,7 @@ public class PosterService {
      * @param user current user
      * @return page of recommended posters
      */
-    public Page<Poster> recommendation(int page, AppUser user) {
+    public Slice<Poster> recommendation(int page, AppUser user) {
         var postersByUser = posterRepo.findAllByAuthor(user, pageRequest(page));
 
         if (postersByUser.getContent().isEmpty()) return popular(page);
@@ -125,13 +126,13 @@ public class PosterService {
         poster.getHashtags().forEach(Hashtag::decrementMentions);
 
         poster.setText(newText);
-        poster.setLastEditedAt(new Date());
+        poster.setLastEditedAt(LocalDateTime.now());
         poster.setHashtags(parseHashtags(newText));
 
         return poster;
     }
 
-    public Page<Poster> postersByUser(AppUser user, int pageNumber) {
+    public Slice<Poster> postersByUser(AppUser user, int pageNumber) {
         return posterRepo.findAllByAuthor(user, pageRequest(pageNumber));
     }
 
@@ -141,7 +142,7 @@ public class PosterService {
      * @param page page number
      * @return a page of popular posters
      */
-    public Page<Poster> popular(int page) {
+    public Slice<Poster> popular(int page) {
         var tags = hashtagRepo.findByMostMentions(pageRequest(page));
         var posters = new HashSet<Poster>(tags.getNumberOfElements());
 

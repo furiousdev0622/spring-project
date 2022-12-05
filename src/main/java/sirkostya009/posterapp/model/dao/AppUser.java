@@ -42,8 +42,7 @@ public class AppUser implements UserDetails {
     private boolean isCredentialsExpired = false;
     private boolean isEnabled = false;
 
-    public AppUser(String email, String username, String password) {
-        this.email = email;
+    public AppUser(String username, String password) {
         this.username = username;
         this.password = password;
     }

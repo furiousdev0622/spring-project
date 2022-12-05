@@ -55,13 +55,13 @@ public class UserApi {
 
     /**
      * Changes bio and email of the user
-     * @param info an AppUserModel instance that holds all public user info
+     * @param request an AppUserModel instance that holds all public user info
      * @param token an object that holds current user's username
      */
     @PostMapping("/edit")
-    public void edit(@RequestBody ChangeSettingsRequest info,
+    public void edit(@RequestBody ChangeSettingsRequest request,
                      JwtAuthenticationToken token) {
-        userService.edit(info, token.getName());
+        userService.edit(request, token.getName());
     }
 
     /**

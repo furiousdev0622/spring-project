@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import javax.persistence.*;
 
@@ -35,8 +36,8 @@ public class Poster implements Comparable<Poster> {
     @ToString.Exclude
     private Set<Hashtag> hashtags;
 
-    private Date postedAt;
-    private Date lastEditedAt;
+    private LocalDateTime postedAt;
+    private LocalDateTime lastEditedAt;
 
     public Poster(String text, AppUser author, Set<Hashtag> hashtags) {
         this.text = text;
@@ -44,7 +45,7 @@ public class Poster implements Comparable<Poster> {
         this.hashtags = hashtags;
 
         this.likes = new HashSet<>();
-        this.postedAt = new Date();
+        this.postedAt = LocalDateTime.now();
     }
 
     @Override

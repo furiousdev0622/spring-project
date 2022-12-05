@@ -6,7 +6,7 @@ import sirkostya009.posterapp.model.dao.AppUser;
 import sirkostya009.posterapp.model.dao.Hashtag;
 import sirkostya009.posterapp.model.dao.Poster;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -20,8 +20,8 @@ public @Data class PosterModel {
     private boolean isLikedByYou;
     private int likes;
     private Long id;
-    private Date postedAt;
-    private Date lastEditAt;
+    private LocalDateTime postedAt;
+    private LocalDateTime lastEditAt;
     private Set<String> hashtags;
 
     public static PosterModel of(Poster poster, AppUser requester, boolean includeUserInfo) {

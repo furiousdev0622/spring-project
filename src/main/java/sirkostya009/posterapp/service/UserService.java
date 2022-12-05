@@ -52,11 +52,14 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public void edit(ChangeSettingsRequest userModel, String username) {
-        findByUsername(username).setBio(userModel.getBio());
+    public void edit(ChangeSettingsRequest request, String username) {
+        findByUsername(username).setBio(request.getBio());
 
-        if (userModel.getNewEmail() != null)
-            changeEmail(userModel.getNewEmail(), username);
+        if (request.getNewEmail() != null)
+            changeEmail(request.getNewEmail(), username);
+
+        if (request.getNewPassword() != null)
+            changePassword(request.getNewPassword(), request.getOldPassword(), username);
     }
 
     public AppUser findByLogin(String login) {
@@ -91,7 +94,7 @@ public class UserService implements UserDetailsService {
                 LocalDateTime.now().plusMinutes(15)
         )).getToken();
 
-        emailSender.send(newEmail, "Confirm new email", ConfirmationEmailSender.generateMail(token));
+        emailSender.send(newEmail, "Confirm new email", ConfirmationEmailSender.generateBody(token));
 
         return true;
     }
