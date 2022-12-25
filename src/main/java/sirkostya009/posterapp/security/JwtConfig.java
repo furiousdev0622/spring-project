@@ -1,6 +1,7 @@
 package sirkostya009.posterapp.security;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
@@ -17,10 +18,11 @@ import static org.springframework.security.oauth2.jose.jws.MacAlgorithm.HS384;
 @RequiredArgsConstructor
 public class JwtConfig {
 
-    public final static String ISSUER = "localhost"; // this is better put somewhere else
-
     private final SecretKey secretKey;
     private final UserService userService;
+
+    @Value("${issuer:localhost}")
+    private String issuer;
 
     @Bean
     public JwtDecoder jwtDecoder() {
@@ -36,7 +38,7 @@ public class JwtConfig {
         return new DelegatingOAuth2TokenValidator<>(
                 subjectValidator(),
                 new JwtTimestampValidator(),
-                new JwtIssuerValidator(ISSUER)
+                new JwtIssuerValidator(issuer)
         );
     }
 
