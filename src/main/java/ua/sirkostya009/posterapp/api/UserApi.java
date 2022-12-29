@@ -5,7 +5,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ua.sirkostya009.posterapp.dto.AppUserModel;
+import ua.sirkostya009.posterapp.dto.AppUserInfo;
 import ua.sirkostya009.posterapp.dto.ChangeSettingsRequest;
 import ua.sirkostya009.posterapp.dto.Credentials;
 import ua.sirkostya009.posterapp.exception.AuthenticationException;
@@ -43,8 +43,8 @@ public class UserApi {
      * @throws NotFoundException if no user was found
      */
     @GetMapping("/{username}")
-    public AppUserModel user(@PathVariable String username) {
-        return AppUserModel.of(userService.findByUsername(username), false);
+    public AppUserInfo user(@PathVariable String username) {
+        return AppUserInfo.of(userService.findByUsername(username), false);
     }
 
     /**
@@ -53,13 +53,13 @@ public class UserApi {
      * @return user
      */
     @GetMapping("/self")
-    public AppUserModel self(JwtAuthenticationToken token) {
-        return AppUserModel.of(userService.findByUsername(token.getName()), true);
+    public AppUserInfo self(JwtAuthenticationToken token) {
+        return AppUserInfo.of(userService.findByUsername(token.getName()), true);
     }
 
     /**
      * Changes bio and email of the user
-     * @param request an AppUserModel instance that holds all public user info
+     * @param request an AppUserInfo instance that holds all public user info
      * @param token an object that holds current user's username
      */
     @PostMapping("/edit")

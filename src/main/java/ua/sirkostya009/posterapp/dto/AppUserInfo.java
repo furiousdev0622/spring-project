@@ -8,7 +8,7 @@ import ua.sirkostya009.posterapp.dao.AppUser;
  * A user model that is served to the client
  */
 @AllArgsConstructor
-public @Data class AppUserModel {
+public @Data class AppUserInfo {
     private long id;
     private String username;
     private String photoPath;
@@ -17,8 +17,8 @@ public @Data class AppUserModel {
     private int following;
     private int followers;
 
-    public static AppUserModel of(AppUser user, boolean showEmail) {
-        return new AppUserModel(
+    public static AppUserInfo of(AppUser user, boolean showEmail) {
+        return new AppUserInfo(
                 user.getId(),
                 user.getUsername(),
                 user.getProfilePictureFilename(),

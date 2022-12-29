@@ -14,9 +14,9 @@ import java.util.stream.Collectors;
  * A poster model that is served to the client
  */
 @AllArgsConstructor
-public @Data class PosterModel {
+public @Data class PosterInfo {
     private String text;
-    private AppUserModel author;
+    private AppUserInfo author;
     private boolean isLikedByYou;
     private int likes;
     private Long id;
@@ -24,10 +24,10 @@ public @Data class PosterModel {
     private LocalDateTime lastEditAt;
     private Set<String> hashtags;
 
-    public static PosterModel of(Poster poster, AppUser requester, boolean includeUserInfo) {
-        return new PosterModel(
+    public static PosterInfo of(Poster poster, AppUser requester, boolean includeUserInfo) {
+        return new PosterInfo(
                 poster.getText(),
-                includeUserInfo ? AppUserModel.of(poster.getAuthor(), false) : null,
+                includeUserInfo ? AppUserInfo.of(poster.getAuthor(), false) : null,
                 poster.getLikes().contains(requester),
                 poster.getLikes().size(),
                 poster.getId(),
