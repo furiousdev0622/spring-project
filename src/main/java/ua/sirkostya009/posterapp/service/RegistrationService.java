@@ -6,10 +6,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.sirkostya009.posterapp.email.ConfirmationEmailSender;
 import ua.sirkostya009.posterapp.email.EmailSender;
+import ua.sirkostya009.posterapp.exception.EmailNotSentException;
 import ua.sirkostya009.posterapp.exception.NotFoundException;
 import ua.sirkostya009.posterapp.dto.RegistrationRequest;
 import ua.sirkostya009.posterapp.dao.AppUser;
 import ua.sirkostya009.posterapp.dao.ConfirmationToken;
+import ua.sirkostya009.posterapp.exception.InvalidTokenException;
+import ua.sirkostya009.posterapp.exception.OccupiedException;
 import ua.sirkostya009.posterapp.repo.ConfirmationTokenRepo;
 import ua.sirkostya009.posterapp.repo.UserRepo;
 
@@ -32,7 +35,8 @@ public class RegistrationService {
      * sets the email to the user,
      * sets token as confirmed.
      * @param token token string to confirm
-     * @throws RuntimeException if any of the above conditions fail
+     * @throws InvalidTokenException if token is invalid
+     * @throws NotFoundException if token is non-existent
      */
     @Transactional
     public void confirm(String token) {
@@ -40,10 +44,10 @@ public class RegistrationService {
                 .orElseThrow(() -> new NotFoundException("token " + token + " not found"));
 
         if (confirmationToken.getConfirmedAt() != null)
-            throw new RuntimeException("token " + token + " outdated");
+            throw new InvalidTokenException("token " + token + " outdated");
 
         if (confirmationToken.getExpiresAt().isBefore(LocalDateTime.now()))
-            throw new RuntimeException("token " + token + " expired");
+            throw new InvalidTokenException("token " + token + " expired");
 
         confirmationToken.getAppUser().enable();
         confirmationToken.getAppUser().setEmail(confirmationToken.getEmail());
@@ -59,14 +63,15 @@ public class RegistrationService {
      * sends an email to the provided email address
      * @param request a wrapper with username, email, and password fields
      * @return confirmation token string to confirm
-     * @throws RuntimeException if any of the above conditions fail
+     * @throws OccupiedException if username or emails have already been taken
+     * @throws EmailNotSentException if failed to send email
      */
     public String register(RegistrationRequest request) {
         if (userRepo.findByUsername(request.getUsername()).isPresent())
-            throw new RuntimeException("username already taken");
+            throw new OccupiedException("username already taken");
 
         if (userRepo.findByEmail(request.getEmail()).isPresent())
-            throw new RuntimeException("email already taken");
+            throw new OccupiedException("email already taken");
 
         var user = new AppUser(request.getUsername(), encoder.encode(request.getPassword()));
 
