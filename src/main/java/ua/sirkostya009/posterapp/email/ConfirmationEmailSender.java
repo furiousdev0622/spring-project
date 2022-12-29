@@ -20,7 +20,7 @@ public class ConfirmationEmailSender implements EmailSender {
     private final JavaMailSender sender;
 
     @Override
-    public void send(String to, String subject, String body) {
+    public void send(String to, String subject, Object body) {
         var message = sender.createMimeMessage();
 
         try {
