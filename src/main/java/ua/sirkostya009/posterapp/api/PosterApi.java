@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ua.sirkostya009.posterapp.dto.PosterModel;
 import ua.sirkostya009.posterapp.dao.AppUser;
 import ua.sirkostya009.posterapp.dao.Poster;
+import ua.sirkostya009.posterapp.exception.NotFoundException;
 import ua.sirkostya009.posterapp.service.PosterService;
 import ua.sirkostya009.posterapp.service.UserService;
 
@@ -71,7 +72,7 @@ public class PosterApi {
      * @param id provided id
      * @param token an object that holds current user's username
      * @return poster with a specified id
-     * @exception RuntimeException if no poster was found
+     * @exception NotFoundException if no poster was found
      */
     @GetMapping("/{id}")
     public PosterModel id(@PathVariable Long id,
@@ -84,7 +85,7 @@ public class PosterApi {
      * @param id id of a poster to like
      * @param token an object that holds current user's username
      * @return true or false whether the user has liked or disliked the post
-     * @exception RuntimeException if no poster was found
+     * @exception NotFoundException if no poster was found
      */
     @GetMapping("/like/{id}")
     public boolean like(@PathVariable Long id,
@@ -98,7 +99,7 @@ public class PosterApi {
      * @param id id of a poster to edit
      * @param token an object that holds current user's username
      * @return updated poster
-     * @exception RuntimeException if no poster was found
+     * @exception NotFoundException if no poster was found
      */
     @PostMapping("/edit/{id}")
     public PosterModel edit(@RequestBody String newText,
@@ -118,7 +119,7 @@ public class PosterApi {
      * @param page number of the page
      * @param token an object that holds current user's username
      * @return page of posters
-     * @exception RuntimeException if no poster or username were found
+     * @exception NotFoundException if no poster or username were found
      */
     @GetMapping("/by/{username}")
     public Slice<PosterModel> userPosters(@PathVariable String username,

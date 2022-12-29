@@ -9,6 +9,7 @@ import ua.sirkostya009.posterapp.dto.AppUserModel;
 import ua.sirkostya009.posterapp.dto.ChangeSettingsRequest;
 import ua.sirkostya009.posterapp.dto.Credentials;
 import ua.sirkostya009.posterapp.exception.AuthenticationException;
+import ua.sirkostya009.posterapp.exception.NotFoundException;
 import ua.sirkostya009.posterapp.service.AuthenticationService;
 import ua.sirkostya009.posterapp.service.UserService;
 
@@ -39,6 +40,7 @@ public class UserApi {
      * Returns information of a specified user
      * @param username requested user's information username
      * @return user
+     * @throws NotFoundException if no user was found
      */
     @GetMapping("/{username}")
     public AppUserModel user(@PathVariable String username) {
